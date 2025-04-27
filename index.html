@@ -129,7 +129,7 @@
                 padding: 0;
                 margin: 0;
                 height: 100vh;
-                overflow: hidden; /* Prevent body scroll */
+                overflow: hidden;
             }
             .main-container {
                 width: 100%;
@@ -142,8 +142,9 @@
             }
             .chat-box {
                 flex: 1;
-                overflow-y: auto; /* Only chat messages scroll */
-                padding-bottom: 120px; /* Space for fixed input */
+                overflow-y: auto;
+                padding-bottom: 120px; /* Menambah padding di bawah untuk menghindari bubble chat terpotong */
+                position: relative;
             }
             .input-container {
                 position: fixed;
@@ -155,6 +156,12 @@
                 padding: 16px;
                 z-index: 10;
             }
+            
+            /* Menambahkan style untuk tema dark pada input container */
+            .theme-dark .input-container {
+                background-color: #1E293B;
+                border-top: 1px solid #334155;
+            }
         }
         @media (min-width: 641px) {
             .main-container {
@@ -165,10 +172,16 @@
             .chat-box {
                 flex: 1;
                 overflow-y: auto;
+                padding-bottom: 20px; /* Memberikan sedikit padding di bawah bubble chat */
             }
             .input-container {
                 padding: 16px;
                 border-top: 1px solid #E2E8F0;
+            }
+            
+            /* Menambahkan style untuk tema dark pada input container */
+            .theme-dark .input-container {
+                border-top: 1px solid #334155;
             }
         }
     </style>
@@ -258,6 +271,7 @@
         const textInputContainer = document.getElementById("text-input-container");
         const voiceInputContainer = document.getElementById("voice-input-container");
         const themeToggle = document.getElementById("theme-toggle");
+        const inputContainer = document.querySelector(".input-container");
 
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = "id-ID";
@@ -269,6 +283,21 @@
         let isVoiceMode = false;
         let useVoiceResponse = false;
         let isSpeaking = false;
+
+        // Dynamically adjust chat-box padding-bottom based on input-container height
+        function adjustChatBoxPadding() {
+            if (window.innerWidth <= 640) { // Only apply in mobile mode
+                const inputHeight = inputContainer.offsetHeight;
+                chatBox.style.paddingBottom = `${inputHeight + 20}px`; // Add extra 20px buffer
+            }
+        }
+
+        // Run on page load
+        window.addEventListener("load", adjustChatBoxPadding);
+        // Run on window resize (e.g., when keyboard appears)
+        window.addEventListener("resize", adjustChatBoxPadding);
+        // Run when mode toggle changes (text/voice input might change height)
+        modeToggle.addEventListener("change", adjustChatBoxPadding);
 
         themeToggle.addEventListener("click", () => {
             document.body.classList.toggle("theme-dark");
@@ -285,6 +314,8 @@
                 textInputContainer.classList.remove("hidden");
                 voiceInputContainer.classList.add("hidden");
             }
+            // Adjust padding after mode change
+            setTimeout(adjustChatBoxPadding, 100); // Delay to ensure DOM updates
         });
 
         window.addEventListener("beforeunload", () => {
@@ -310,6 +341,7 @@
             chatBox.appendChild(messageDiv);
             setTimeout(() => messageDiv.classList.add("show"), 10);
             chatBox.scrollTop = chatBox.scrollHeight;
+            adjustChatBoxPadding(); // Adjust padding after adding a new message
         }
 
         async function getAIResponse(userInput) {
