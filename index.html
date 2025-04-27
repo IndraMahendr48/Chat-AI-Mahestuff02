@@ -32,7 +32,6 @@
         .chat-container {
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23f0f0f0' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
         }
-        /* Modified toggle switch - smaller for mobile */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -125,11 +124,12 @@
         .theme-dark .user-bubble {
             background: linear-gradient(135deg, #818CF8 0%, #6366F1 100%);
         }
-        /* Mobile responsive styles - remove card container and adjust layout */
         @media (max-width: 640px) {
             body {
                 padding: 0;
                 margin: 0;
+                height: 100vh;
+                overflow: hidden; /* Prevent body scroll */
             }
             .main-container {
                 width: 100%;
@@ -142,24 +142,38 @@
             }
             .chat-box {
                 flex: 1;
-                min-height: 0;
+                overflow-y: auto; /* Only chat messages scroll */
+                padding-bottom: 120px; /* Space for fixed input */
+            }
+            .input-container {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: white;
+                border-top: 1px solid #E2E8F0;
+                padding: 16px;
+                z-index: 10;
             }
         }
-        /* Desktop styles - fixed height for laptop */
         @media (min-width: 641px) {
             .main-container {
-                height: 600px; /* Fixed height for laptop */
+                height: 600px;
                 display: flex;
                 flex-direction: column;
             }
             .chat-box {
                 flex: 1;
-                min-height: 0; /* Prevents overflow */
+                overflow-y: auto;
+            }
+            .input-container {
+                padding: 16px;
+                border-top: 1px solid #E2E8F0;
             }
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-0 sm:p-6 mb-8 lg:mb-0">
+<body class="min-h-screen flex flex-col items-center justify-center p-0 sm:p-6">
     <div class="bg-white main-container rounded-none sm:rounded-2xl shadow-none sm:shadow-xl w-full max-w-lg sm:max-w-xl flex flex-col">
         <div class="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
             <div class="flex items-center gap-2 sm:gap-3">
@@ -185,9 +199,9 @@
             </div>
         </div>
         
-        <div id="chat-box" class="chat-container chat-box overflow-y-auto p-4"></div>
+        <div id="chat-box" class="chat-container chat-box p-4"></div>
         
-        <div class="p-4 border-t border-gray-200">
+        <div class="input-container">
             <div id="text-input-container" class="flex items-center gap-2">
                 <input id="text-input" type="text" placeholder="Ketik pesan..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <button id="send-btn" class="flex-shrink-0 bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition duration-200 w-12 h-12 flex items-center justify-center">
@@ -219,19 +233,16 @@
     </div>
 
     <script>
-        // Groq API Key (Replace with your actual key)
         const GROQ_API_KEY = "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";
         if (!GROQ_API_KEY) {
             alert("Error: API key Groq tidak ditemukan.");
             throw new Error("API key missing");
         }
 
-        // Chat messages history
         let messages = [
             { role: "system", content: "Kamu adalah asisten AI yang ramah dan membantu, bekerja untuk Mahestuff02, seorang pengembang web. Gunakan bahasa Indonesia yang sederhana. Kamu adalah bawahan Mahestuff02 dan membantu menjalankan tugas-tugas yang diberikan oleh Mahestuff02 atau pengguna." }
         ];
 
-        // DOM elements
         const chatBox = document.getElementById("chat-box");
         const textInput = document.getElementById("text-input");
         const sendBtn = document.getElementById("send-btn");
@@ -248,7 +259,6 @@
         const voiceInputContainer = document.getElementById("voice-input-container");
         const themeToggle = document.getElementById("theme-toggle");
 
-        // Web Speech API
         const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = "id-ID";
         recognition.interimResults = false;
@@ -260,12 +270,10 @@
         let useVoiceResponse = false;
         let isSpeaking = false;
 
-        // Theme toggle
         themeToggle.addEventListener("click", () => {
             document.body.classList.toggle("theme-dark");
         });
 
-        // Mode toggle
         modeToggle.addEventListener("change", () => {
             isVoiceMode = modeToggle.checked;
             useVoiceResponse = modeToggle.checked;
@@ -279,12 +287,10 @@
             }
         });
 
-        // Stop speech when page unloads/refreshes
         window.addEventListener("beforeunload", () => {
             stopSpeech();
         });
 
-        // Add message to chat box
         function addMessage(role, content) {
             const DateTime = luxon.DateTime;
             const now = DateTime.now().toLocaleString(DateTime.TIME_SIMPLE);
@@ -306,9 +312,7 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        // Get response from Groq API
         async function getAIResponse(userInput) {
-            // Stop any ongoing speech when sending a new message
             stopSpeech();
             
             messages.push({ role: "user", content: userInput });
@@ -339,7 +343,6 @@
                 messages.push({ role: "assistant", content: aiResponse });
                 addMessage("assistant", aiResponse);
 
-                // Speak the response only in voice mode
                 if (useVoiceResponse) {
                     speak(aiResponse);
                 }
@@ -361,13 +364,11 @@
             }
         }
 
-        // Text-to-Speech with Indonesian voice
         function speak(text) {
-            stopSpeech(); // Stop any ongoing speech
+            stopSpeech();
             
             const utterance = new SpeechSynthesisUtterance(text);
             
-            // Try to find Indonesian voice
             const voices = window.speechSynthesis.getVoices();
             const indonesianVoice = voices.find(voice => 
                 voice.lang === 'id-ID' || 
@@ -380,10 +381,9 @@
             }
             
             utterance.lang = "id-ID";
-            utterance.rate = 0.9; // Slightly slower for more clarity
-            utterance.pitch = 1.1; // Slight pitch adjustment for more character
+            utterance.rate = 0.9;
+            utterance.pitch = 1.1;
             
-            // Show stop icon while speaking
             sendIcon.classList.add("hidden");
             stopIcon.classList.remove("hidden");
             isSpeaking = true;
@@ -397,7 +397,6 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        // Stop any ongoing speech
         function stopSpeech() {
             if (window.speechSynthesis) {
                 window.speechSynthesis.cancel();
@@ -407,13 +406,10 @@
             }
         }
 
-        // Handle text input send button (dual function: send message or stop speech)
         sendBtn.addEventListener("click", () => {
             if (isSpeaking) {
-                // If speaking, stop the speech
                 stopSpeech();
             } else {
-                // Otherwise send the message
                 const text = textInput.value.trim();
                 if (text) {
                     getAIResponse(text);
@@ -428,7 +424,6 @@
             }
         });
 
-        // Add welcome message
         setTimeout(() => {
             const welcomeMsg = "Halo! Saya asisten AI yang dibuat oleh seorang pengembang web. Saya di sini untuk membantu Anda atas perintah Mahestuff02. Apa yang bisa saya bantu hari ini?";
             messages.push({ role: "assistant", content: welcomeMsg });
@@ -438,7 +433,6 @@
             }
         }, 500);
 
-        // Fix for Safari and older browsers that might not have all voices ready
         if (window.speechSynthesis) {
             let voices = [];
             
@@ -453,17 +447,14 @@
             }
         }
 
-        // Voice button click (toggle recording)
         voiceBtn.addEventListener("click", () => {
             if (isRecognizing) {
-                // If already recording, stop it
                 recognition.stop();
                 isRecognizing = false;
                 voiceBtn.classList.remove("recording", "bg-indigo-700");
                 voiceBtnText.textContent = "Klik untuk Bicara";
                 micIcon.classList.remove("animate-pulse");
             } else {
-                // Start recording
                 recognition.start();
                 isRecognizing = true;
                 voiceBtn.classList.add("recording", "bg-indigo-700");
@@ -501,7 +492,6 @@
         };
 
         recognition.onerror = (event) => {
-            // Handle different types of errors
             if (event.error === "no-speech") {
                 status.textContent = "Tidak ada suara terdeteksi";
                 if (useVoiceResponse) {
@@ -529,6 +519,5 @@
             statusIndicator.classList.remove("text-indigo-500");
         };
     </script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'936fe027797006ea',t:'MTc0NTc3MzIyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
