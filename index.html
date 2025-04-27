@@ -159,7 +159,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-0 sm:p-6">
+<body class="min-h-screen flex flex-col items-center justify-center p-0 sm:p-6 mb-8 lg:mb-0">
     <div class="bg-white main-container rounded-none sm:rounded-2xl shadow-none sm:shadow-xl w-full max-w-lg sm:max-w-xl flex flex-col">
         <div class="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
             <div class="flex items-center gap-2 sm:gap-3">
@@ -187,7 +187,7 @@
         
         <div id="chat-box" class="chat-container chat-box overflow-y-auto p-4"></div>
         
-        <div class="p-4 border-t mb-12 lg:mb-0 border-gray-200">
+        <div class="p-4 border-t border-gray-200">
             <div id="text-input-container" class="flex items-center gap-2">
                 <input id="text-input" type="text" placeholder="Ketik pesan..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <button id="send-btn" class="flex-shrink-0 bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition duration-200 w-12 h-12 flex items-center justify-center">
@@ -228,7 +228,7 @@
 
         // Chat messages history
         let messages = [
-            { role: "system", content: "Kamu adalah asisten AI yang ramah dan membantu. Gunakan bahasa Indonesia yang sederhana." }
+            { role: "system", content: "Kamu adalah asisten AI yang ramah dan membantu, bekerja untuk Mahestuff02, seorang pengembang web. Gunakan bahasa Indonesia yang sederhana. Kamu adalah bawahan Mahestuff02 dan membantu menjalankan tugas-tugas yang diberikan oleh Mahestuff02 atau pengguna." }
         ];
 
         // DOM elements
@@ -430,7 +430,7 @@
 
         // Add welcome message
         setTimeout(() => {
-            const welcomeMsg = "Halo! Saya asisten AI Mahestuff02. Ada yang bisa saya bantu hari ini?";
+            const welcomeMsg = "Halo! Saya asisten AI yang dibuat oleh seorang pengembang web. Saya di sini untuk membantu Anda atas perintah Mahestuff02. Apa yang bisa saya bantu hari ini?";
             messages.push({ role: "assistant", content: welcomeMsg });
             addMessage("assistant", welcomeMsg);
             if (useVoiceResponse) {
@@ -529,5 +529,6 @@
             statusIndicator.classList.remove("text-indigo-500");
         };
     </script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'936fe027797006ea',t:'MTc0NTc3MzIyMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
